@@ -43,8 +43,12 @@ public class SolverCrossword {
 			byte [][] matrix = new byte[vertical_row][horizontal_column];
 			resultMatrix = new ResultMatrix(matrix);
 			
-			resultMatrix.imposition(vert, horizontal_column);
+			resultMatrix.impositionVert(vert, horizontal_column);
 			List<List<Byte>> returnTheList = resultMatrix.returnTheList();
+			
+//			resultMatrix.impositionHorz(horz, vertical_row);
+//			List<List<Byte>> returnTheList = resultMatrix.returnTheList();
+			
 	
 		return returnTheList;		
 	}	
