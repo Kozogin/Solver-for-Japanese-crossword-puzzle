@@ -35,10 +35,10 @@ public class ResultMatrix {
 			for (int i = 0; i < handler.length; i++) {
 				result[row][i] = handler[i];
 			}
-		} 
+		}
 		return result;
 	}
-	
+
 	public byte[][] impositionHorz(List<List<Integer>> columns, int sizeRow) {
 
 		byte[] handler = new byte[sizeRow];
@@ -49,7 +49,7 @@ public class ResultMatrix {
 			for (int i = 0; i < handler.length; i++) {
 				result[i][column] = handler[i];
 			}
-		} 
+		}
 		return result;
 	}
 
@@ -73,7 +73,9 @@ public class ResultMatrix {
 			}
 
 			if (indMatrix < sizeColumnOrRow) {
-				handler[indMatrix++] = 2;
+				 do {
+					handler[indMatrix++] = 2;
+				 }while(indMatrix < sizeColumnOrRow && indInnerList == rowOrColumn.size() - 1);
 			}
 		}
 		return handler;

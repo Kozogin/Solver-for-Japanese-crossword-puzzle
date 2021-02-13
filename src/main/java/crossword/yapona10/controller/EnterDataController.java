@@ -111,12 +111,6 @@ public class EnterDataController {
 	@RequestMapping(value = "/show_result", method = RequestMethod.GET)
 	public ModelAndView showResult(Model model) {
 		
-//		byte [][] demo = {{0, 1, 0, 1, 2, 0, 1, 2},{0, 0, 1, 1, 2, 2, 0, 0},
-//				{0, 0, 0, 0, 1, 1, 1, 1, 2, 2}, {0, 0, 0, 0, 0, 0, 0, 0},
-//				{1, 1, 1, 1, 2, 2, 2, 2}};	
-//		
-//		
-		
 		ModelAndView map = new ModelAndView("show_result");
 		map.addObject("showCrossword", solverCrossword.solver());
 		return map;
