@@ -25,45 +25,59 @@ public class ResultMatrix {
 		return resultShow;
 	}
 
-	public byte[][] impositionVert(List<List<Integer>> rowOrColumn, int sizeColumnOrRow) {
+	public byte[][] impositionVert(List<List<Integer>> rows, int sizeColumn) {
 
-		//byte[] handler = imposition(rowOrColumns, sizeColumnOrRow);
-		byte[] handler = new byte[sizeColumnOrRow];
+		byte[] handler = new byte[sizeColumn];
+		for (int row = 0; row < rows.size(); row++) {
 
-		for (int row = 0; row < rowOrColumn.size(); row++) {
-
-			int lengthElement = 0;
-			int indMatrix = 0;
-			int indexExit = 0;
-			for (int indInnerList = 0; indInnerList < rowOrColumn.get(row).size(); indInnerList++) {
-
-				lengthElement = rowOrColumn.get(row).get(indInnerList);// 2
-
-				indexExit = indMatrix + lengthElement;
-
-				while (indMatrix < indexExit) {
-					handler[indMatrix++] = 1;
-				}
-
-				if (indMatrix < sizeColumnOrRow) {
-					handler[indMatrix++] = 2;
-				}
-
-			}
+			handler = imposition(rows.get(row), sizeColumn);
 
 			for (int i = 0; i < handler.length; i++) {
 				result[row][i] = handler[i];
 			}
+		} 
+		return result;
+	}
+	
+	public byte[][] impositionHorz(List<List<Integer>> columns, int sizeRow) {
 
-		} // row
+		byte[] handler = new byte[sizeRow];
+		for (int column = 0; column < columns.size(); column++) {
 
+			handler = imposition(columns.get(column), sizeRow);
+
+			for (int i = 0; i < handler.length; i++) {
+				result[i][column] = handler[i];
+			}
+		} 
 		return result;
 	}
 
-	
-				// pass along the line vertical or horizontal push into the matrix from the
-				// beginning with a single gap
-	
+	public byte[] imposition(List<Integer> rowOrColumn, int sizeColumnOrRow) {
+
+		byte[] handler = new byte[sizeColumnOrRow];
+
+		// pass along the line vertical or horizontal push into the matrix from the
+		// beginning with a single gap
+
+		int lengthElement = 0;
+		int indMatrix = 0;
+		int indexExit = 0;
+		for (int indInnerList = 0; indInnerList < rowOrColumn.size(); indInnerList++) {
+
+			lengthElement = rowOrColumn.get(indInnerList);
+			indexExit = indMatrix + lengthElement;
+
+			while (indMatrix < indexExit) {
+				handler[indMatrix++] = 1;
+			}
+
+			if (indMatrix < sizeColumnOrRow) {
+				handler[indMatrix++] = 2;
+			}
+		}
+		return handler;
+	}
 
 	public byte[][] getResult() {
 		return result;
