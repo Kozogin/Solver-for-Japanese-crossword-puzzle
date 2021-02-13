@@ -1,7 +1,6 @@
 package crossword.yapona10.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-
 import crossword.yapona10.domain.EnterData;
 import crossword.yapona10.service.EnterDataService;
-import crossword.yapona10.service.impl.ResultMatrix;
 import crossword.yapona10.service.impl.SolverCrossword;
 
 @Controller
@@ -26,8 +23,7 @@ public class EnterDataController {
 	private int horizontalInt;
 	private int crosswordInt;
 	
-	private SolverCrossword solverCrossword;
-	private ResultMatrix resultMatrix;
+	private SolverCrossword solverCrossword;	
 	
 	@Autowired
 	private EnterDataService enterDataService;
@@ -76,7 +72,7 @@ public class EnterDataController {
 	}	
 	
 	@RequestMapping(value = "/form_table", method = RequestMethod.POST)
-	public ModelAndView registration(@RequestParam String [] vertical_row,
+	public ModelAndView saveToDB(@RequestParam String [] vertical_row,
 			@RequestParam String [] horizontal_column
 			) throws IOException {	
 		
@@ -94,8 +90,6 @@ public class EnterDataController {
 			enterDataService.save(new EnterData(numberBD, -1*i - 1, horizontal_column[i]));
 		}
 		
-		solverCrossword.solver();
-		
 		return new ModelAndView("redirect:/show_result");
 	}
 	
@@ -108,10 +102,8 @@ public class EnterDataController {
 	public ModelAndView readFromBDPost(@RequestParam String [] vertical_row,
 			@RequestParam String [] horizontal_column
 			) throws IOException {
-		
-		solverCrossword = new SolverCrossword(vertical_row, horizontal_column);
-		solverCrossword.solver();
-		
+
+		solverCrossword = new SolverCrossword(vertical_row, horizontal_column);	
 		ModelAndView map = new ModelAndView("redirect:show_result");
 		return map;
 	}
@@ -119,18 +111,14 @@ public class EnterDataController {
 	@RequestMapping(value = "/show_result", method = RequestMethod.GET)
 	public ModelAndView showResult(Model model) {
 		
-		byte [][] demo = {{0, 1, 0, 1, 2, 0, 1, 2},{0, 0, 1, 1, 2, 2, 0, 0},
-				{0, 0, 0, 0, 1, 1, 1, 1, 2, 2}, {0, 0, 0, 0, 0, 0, 0, 0},
-				{1, 1, 1, 1, 2, 2, 2, 2}};	
-		
-		resultMatrix = new ResultMatrix(demo);
-		
-		
-		//resultMatrix.imposition(new ArrayList<>());
+//		byte [][] demo = {{0, 1, 0, 1, 2, 0, 1, 2},{0, 0, 1, 1, 2, 2, 0, 0},
+//				{0, 0, 0, 0, 1, 1, 1, 1, 2, 2}, {0, 0, 0, 0, 0, 0, 0, 0},
+//				{1, 1, 1, 1, 2, 2, 2, 2}};	
+//		
+//		
 		
 		ModelAndView map = new ModelAndView("show_result");
-		map.addObject("showCrossword", resultMatrix.returnTheList());
-		System.out.println("i coooooooooooooooontr" + resultMatrix.returnTheList());
+		map.addObject("showCrossword", solverCrossword.solver());
 		return map;
 	}
 

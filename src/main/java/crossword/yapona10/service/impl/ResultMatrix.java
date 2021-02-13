@@ -25,40 +25,43 @@ public class ResultMatrix {
 		return resultShow;		
 	}
 	
-	public void imposition(List<List<Integer>> rowOrColumn) {
+	public byte [][] imposition(List<List<Integer>> rowOrColumn, int sizeColumnOrRow) {		
 		
-		//byte [] handler = new byte[rowOrColumn.size()];
-		//byte [] handler2 = new byte[rowOrColumn.get(0).size()];
+		byte [] handler = new byte[sizeColumnOrRow]; 
+	
+		//byte [] handler = {1, 2, 2, 1, 0, 0};
+		for (int row = 0; row < rowOrColumn.size(); row++) {
+			
 		
-		byte [] handler = new byte[15];
 		
-		rowOrColumn = new ArrayList<>();
-		List<Integer> row = new ArrayList<>();
+				//прохід по рядку вертикаль запихаємо в матрицю з початку з одинарним зазором
+				int lengthElement = 0;
+				int indMatrix = 0;
+				int indexExit = 0;
+				for (int indInnerList = 0; indInnerList < rowOrColumn.get(row).size(); indInnerList++) {
+					
+					lengthElement = rowOrColumn.get(row).get(indInnerList);//2
+					
+					indexExit = indMatrix + lengthElement;
+					
+					while(indMatrix < indexExit) {
+						handler[indMatrix++] = 1;
+					}
+					
+					if(indMatrix < sizeColumnOrRow) {
+						handler[indMatrix++] = 2;
+					}
+					
+				}		
+				
+				
+				for (int i = 0; i < handler.length; i++) {
+					result[row][i] = handler[i];
+				}
+				
+		} // row
 		
-		row.add(3);
-		row.add(5);
-		row.add(1);
-		
-		rowOrColumn.add(row);
-		
-		int element = 0;
-		int indexElement = 0;
-		int indexSubElement = 0;
-		for (int i = 0; i < handler.length; i++) {
-			element = rowOrColumn.get(0).get(indexElement);
-			if(element - indexSubElement == 0) {
-				element = 0;
-				indexElement = 0;
-				indexSubElement = 0;
-			}
-			indexElement++;
-			indexSubElement++;
-		}
-		
-		for (int i = 0; i < handler.length; i++) {
-			System.out.println(handler[i]);
-		}
-		
+		return result;
 	}
 	
 	

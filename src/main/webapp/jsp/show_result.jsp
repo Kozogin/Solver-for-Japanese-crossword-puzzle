@@ -36,7 +36,7 @@
 									<c:forEach items="${showCrossword_row}"
 										var="showCrossword_pixel">
 
-										<c:if test="${showCrossword_pixel == 0}">
+										<c:if test="${showCrossword_pixel == 2}">
 											<td class="light"></td>
 										</c:if>
 
@@ -44,7 +44,7 @@
 											<td class="dark"></td>
 										</c:if>
 
-										<c:if test="${showCrossword_pixel == 2}">
+										<c:if test="${showCrossword_pixel == 0}">
 											<td class="blue"></td>
 										</c:if>
 

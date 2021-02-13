@@ -41,7 +41,8 @@ public class EnterData {
 		this.lineNumbers = lineNumbers;
 	}
 	
-	public EnterData() {}
+	public EnterData() {}	
+	
 
 	public Integer getId() {
 		return id;
