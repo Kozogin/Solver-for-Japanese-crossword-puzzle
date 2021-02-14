@@ -25,14 +25,14 @@ public class ResultMatrix {
 		return resultShow;
 	}
 
-	public byte[][] offsetVert(List<List<Integer>> rows, int sizeColumn) {
+	public byte[][] displacementVert(List<List<Integer>> rows, int sizeColumn) {
 
 		byte[] handler = new byte[sizeColumn];
 		Boolean finish = new Boolean(false);
 		
 		for (int row = 0; row < rows.size(); row++) {
 
-			handler = offset(rows.get(row), sizeColumn, finish, 1);
+			handler = displacement(rows.get(row), sizeColumn, finish, 1);
 			
 			System.out.println(" finish   --------------- " + finish);
 			
@@ -43,7 +43,7 @@ public class ResultMatrix {
 		return result;
 	}
 
-	public byte[][] offsetHorz(List<List<Integer>> columns, int sizeRow) {
+	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
 
 		byte[] handler = new byte[sizeRow];
 		
@@ -52,7 +52,7 @@ public class ResultMatrix {
 			
 			
 
-			//handler = offset(columns.get(column), sizeRow, finish, 1);
+			//handler = displacement(columns.get(column), sizeRow, finish, 1);
 			
 
 			for (int i = 0; i < handler.length; i++) {
@@ -62,7 +62,7 @@ public class ResultMatrix {
 		return result;
 	}
 
-	public byte[] offset(List<Integer> rowOrColumn, int sizeColumnOrRow, 
+	public byte[] displacement(List<Integer> rowOrColumn, int sizeColumnOrRow, 
 				Boolean finish, int numElement) {
 		
 		numElement = rowOrColumn.size() - 1;

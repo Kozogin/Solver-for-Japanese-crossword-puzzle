@@ -43,10 +43,10 @@ public class SolverCrossword {
 			byte [][] matrix = new byte[vertical_row][horizontal_column];
 			resultMatrix = new ResultMatrix(matrix);
 			
-			resultMatrix.offsetVert(vert, horizontal_column);
+			resultMatrix.displacementVert(vert, horizontal_column);
 			List<List<Byte>> returnTheList = resultMatrix.returnTheList();
 			
-//			resultMatrix.offsetHorz(horz, vertical_row);
+//			resultMatrix.displacementHorz(horz, vertical_row);
 //			List<List<Byte>> returnTheList = resultMatrix.returnTheList();
 			
 	
