@@ -48,10 +48,13 @@ public class ResultMatrix {
 	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
 
 		byte[] handler = new byte[sizeRow];		
+		List<Integer> indents = new ArrayList<>();
 		
 		for (int column = 0; column < columns.size(); column++) {
-
-			//handler = displacement(columns.get(column), sizeRow, finish, 1);			
+			
+			indents.clear();
+			indents = createIndents(columns.get(column), sizeRow);	
+			handler = displacement(columns.get(column), sizeRow, indents);	
 
 			for (int i = 0; i < handler.length; i++) {
 				result[i][column] = handler[i];
@@ -81,10 +84,7 @@ public class ResultMatrix {
 				indents.add(indent);
 			}			
 		}
-		
-//		System.out.println(rowOrColumn);
-//		System.out.println(indents);
-		
+
 		return indents;		
 	}
 	
