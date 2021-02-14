@@ -36,28 +36,34 @@ public class ResultMatrix {
 		for (int row = 0; row < 1; row++) {
 //		for (int row = 0; row < rows.size(); row++) {					
 
-//			indents.clear();
-//			indents = createIndents(rows.get(row), sizeColumn, 0, 1);	
-//			handler = displacement(rows.get(row), sizeColumn, indents);	
+			
 			int visual = 0;
 			for (int indexIndentAdd = rows.get(0).size(); indexIndentAdd > 0; indexIndentAdd--) {
+				
+				System.out.println("indexIndentAdd  -------- " + indexIndentAdd);
+				
 				int increaseIndent = 0;
-				this.finish = false;
 				
 				this.finish = true;
 				while (this.finish) {
 					
 					indents.clear();
-					indents = createIndents(rows.get(row), sizeColumn, 0, visual);
+					//indents = createIndents(rows.get(row), sizeColumn, indexIndentAdd - 2, increaseIndent++);
+					indents = createIndents(rows.get(row), sizeColumn, indexIndentAdd - 1, increaseIndent++);
+					
 					handler = displacement(rows.get(row), sizeColumn, indents);
 
 					for (int j = 0; j < handler.length; j++) {
 						result[visual][j] = handler[j];
 					}
-
+					
+					
 					visual++;
+					if(visual > 12) {
+						visual = 12;
+					}
 				}
-				visual = 0;	
+				
 
 			}
 
@@ -86,31 +92,46 @@ public class ResultMatrix {
 		return result;
 	}
 
-	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int indexIndentAdd,
-			int increaseIndent) {
-
-//		System.out.println("indexIndentAdd --  " + indexIndentAdd);
-//		System.out.println("increaseIndent --  " + increaseIndent);
+	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, 
+			int indexIndentAdd, int increaseIndent) {
 
 		List<Integer> indents = new ArrayList<>();
+		
+		if(indexIndentAdd == 0) {
+			indents.add(increaseIndent);
+		} else {
+			indents.add(0);
+		}
 		int summLengthElement = 0;
-		int summIndents = 0;
+		int summIndents = increaseIndent;
 		int indent = 0;
 
 		for (int indInnerList = 0; indInnerList < rowOrColumn.size(); indInnerList++) {
 			summLengthElement += rowOrColumn.get(indInnerList);
+			
 			if (summLengthElement + summIndents <= sizeColumnOrRow) {
 
-				indent = indexIndentAdd == indInnerList ? 1 + increaseIndent : 1;
+				indent = indexIndentAdd == indInnerList + 1 ? 1 + increaseIndent : 1;
+				
+//				System.out.println("indexIndentAdd--------------" + indexIndentAdd);
+//				System.out.println("indInnerList + 1-----" + indInnerList + 1);
+//				System.out.println("indent-----+++++" + indent);
+				
 
 				if (indInnerList == rowOrColumn.size() - 1) {
 					indent = sizeColumnOrRow - summLengthElement - summIndents;
+					
+//					System.out.println("indent--------------" + indent);
+//					System.out.println("sizeColumnOrRow-----" + sizeColumnOrRow);
+//					System.out.println("summLengthElement---" + summLengthElement);
+//					System.out.println("summIndents---------" + summIndents);
+										
 				}
 
 				summIndents += indent;
 				indents.add(indent);
 
-				if (indents.size() == rowOrColumn.size() && indents.get(rowOrColumn.size() - 1) == 0) {
+				if (indents.size() == rowOrColumn.size() + 1 && indents.get(indents.size() - 1) == 0) {
 					this.finish = false;
 					System.out.println(" 0000000000 " + indents.get(indents.size() - 1) + "   ---  " + finish);
 				}
@@ -133,28 +154,40 @@ public class ResultMatrix {
 		int lengthElement = 0;
 		int lengthIndent = 0;
 		int indMatrix = 0;
-		int indexExit = 0;
+		int indexExit = indents.get(0);
+		
+		
+		if(indents.get(0) != 0){
+			while (indMatrix < indexExit) {
+				handler[indMatrix++] = 2;
+			}
+		}
+		
+		
 		for (int indInnerList = 0; indInnerList < rowOrColumn.size(); indInnerList++) {
-
+			
 			lengthElement = rowOrColumn.get(indInnerList);
-			lengthIndent = indents.get(indInnerList);
+			lengthIndent = indents.get(indInnerList + 1);
 
 			indexExit = indMatrix + lengthElement;
-
+			
 			while (indMatrix < indexExit) {
 				handler[indMatrix++] = 1;
 			}
-
+			
 			indexExit += lengthIndent;
-
+			
 			if (indMatrix < sizeColumnOrRow || indexExit < sizeColumnOrRow) {
 				while (indMatrix < indexExit) {
 					handler[indMatrix++] = 2;
 				}
-			}
+			}			
+
 		}
+		
 		return handler;
 	}
+
 
 	public byte[][] getResult() {
 		return result;
