@@ -25,13 +25,17 @@ public class ResultMatrix {
 		return resultShow;
 	}
 
-	public byte[][] impositionVert(List<List<Integer>> rows, int sizeColumn) {
+	public byte[][] offsetVert(List<List<Integer>> rows, int sizeColumn) {
 
 		byte[] handler = new byte[sizeColumn];
+		Boolean finish = new Boolean(false);
+		
 		for (int row = 0; row < rows.size(); row++) {
 
-			handler = imposition(rows.get(row), sizeColumn);
-
+			handler = offset(rows.get(row), sizeColumn, finish, 1);
+			
+			System.out.println(" finish   --------------- " + finish);
+			
 			for (int i = 0; i < handler.length; i++) {
 				result[row][i] = handler[i];
 			}
@@ -39,12 +43,17 @@ public class ResultMatrix {
 		return result;
 	}
 
-	public byte[][] impositionHorz(List<List<Integer>> columns, int sizeRow) {
+	public byte[][] offsetHorz(List<List<Integer>> columns, int sizeRow) {
 
 		byte[] handler = new byte[sizeRow];
+		
+		
 		for (int column = 0; column < columns.size(); column++) {
+			
+			
 
-			handler = imposition(columns.get(column), sizeRow);
+			//handler = offset(columns.get(column), sizeRow, finish, 1);
+			
 
 			for (int i = 0; i < handler.length; i++) {
 				result[i][column] = handler[i];
@@ -53,7 +62,10 @@ public class ResultMatrix {
 		return result;
 	}
 
-	public byte[] imposition(List<Integer> rowOrColumn, int sizeColumnOrRow) {
+	public byte[] offset(List<Integer> rowOrColumn, int sizeColumnOrRow, 
+				Boolean finish, int numElement) {
+		
+		numElement = rowOrColumn.size() - 1;
 
 		byte[] handler = new byte[sizeColumnOrRow];
 
@@ -75,9 +87,13 @@ public class ResultMatrix {
 			if (indMatrix < sizeColumnOrRow) {
 				 do {
 					handler[indMatrix++] = 2;
-				 }while(indMatrix < sizeColumnOrRow && indInnerList == rowOrColumn.size() - 1);
+				 }while(indMatrix < sizeColumnOrRow && indInnerList == numElement);
 			}
 		}
+		finish = true;
+		
+		System.out.println(" rrr vfvf finish   --------------- " + finish);
+		
 		return handler;
 	}
 
