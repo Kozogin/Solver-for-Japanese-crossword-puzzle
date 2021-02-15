@@ -18,6 +18,15 @@
      background: #000; 
 }
 
+.crossword .light-handler {
+     background: #e8e; 
+}
+
+.crossword .dark-handler {
+     background: #424; 
+}
+
+
 .crossword .blue {
      background: #00f; 
 }
