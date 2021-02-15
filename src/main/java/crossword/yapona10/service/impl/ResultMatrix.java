@@ -48,7 +48,7 @@ public class ResultMatrix {
 				while (this.finish) {
 					
 					indents.clear();
-					//indents = createIndents(rows.get(row), sizeColumn, indexIndentAdd - 2, increaseIndent++);
+					//indents = createIndents(rows.get(row), sizeColumn, 2, increaseIndent++);
 					indents = createIndents(rows.get(row), sizeColumn, indexIndentAdd - 1, increaseIndent++);
 					
 					handler = displacement(rows.get(row), sizeColumn, indents);
@@ -59,8 +59,8 @@ public class ResultMatrix {
 					
 					
 					visual++;
-					if(visual > 12) {
-						visual = 12;
+					if(visual > 20) {
+						visual = 20;
 					}
 				}
 				
@@ -97,47 +97,43 @@ public class ResultMatrix {
 
 		List<Integer> indents = new ArrayList<>();
 		
+		int elementLength = 0;
+		int summAll = 0;
+		int indent = 0;
+		
 		if(indexIndentAdd == 0) {
 			indents.add(increaseIndent);
 		} else {
 			indents.add(0);
 		}
-		int summLengthElement = 0;
-		int summIndents = increaseIndent;
-		int indent = 0;
-
-		for (int indInnerList = 0; indInnerList < rowOrColumn.size(); indInnerList++) {
-			summLengthElement += rowOrColumn.get(indInnerList);
+		
+		summAll += indents.get(0);
+		
+		for (int indElement = 0; indElement < rowOrColumn.size(); indElement++) {
 			
-			if (summLengthElement + summIndents <= sizeColumnOrRow) {
-
-				indent = indexIndentAdd == indInnerList + 1 ? 1 + increaseIndent : 1;
-				
-//				System.out.println("indexIndentAdd--------------" + indexIndentAdd);
-//				System.out.println("indInnerList + 1-----" + indInnerList + 1);
-//				System.out.println("indent-----+++++" + indent);
-				
-
-				if (indInnerList == rowOrColumn.size() - 1) {
-					indent = sizeColumnOrRow - summLengthElement - summIndents;
-					
-//					System.out.println("indent--------------" + indent);
-//					System.out.println("sizeColumnOrRow-----" + sizeColumnOrRow);
-//					System.out.println("summLengthElement---" + summLengthElement);
-//					System.out.println("summIndents---------" + summIndents);
-										
-				}
-
-				summIndents += indent;
-				indents.add(indent);
-
-				if (indents.size() == rowOrColumn.size() + 1 && indents.get(indents.size() - 1) == 0) {
+			elementLength = rowOrColumn.get(indElement);
+			summAll += elementLength;
+			
+			indent = 1;			
+			if(indexIndentAdd == indElement + 1) {
+				indent = increaseIndent + 1;				
+			}
+			summAll += indent;
+			
+			if(indElement == rowOrColumn.size() - 1) {
+				indent = sizeColumnOrRow - summAll + 1;
+				if(indent == 0) {
 					this.finish = false;
 					System.out.println(" 0000000000 " + indents.get(indents.size() - 1) + "   ---  " + finish);
 				}
 			}
+			
+			indents.add(indent);			
+			
+			
 		}
-
+		
+		
 		System.out.println(" " + rowOrColumn);
 		System.out.println("                     " + indents);
 
