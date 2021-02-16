@@ -1,17 +1,19 @@
 package crossword.yapona10.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ResultMatrix {
 
 	private byte[][] result;
 
-	private boolean finish;
+//	private boolean finish;
 
 	public ResultMatrix(byte[][] result) {
 		this.result = result;
-		this.finish = false;
+		this.result[0][2] = 1;
+		this.result[0][7] = 1;
 	}
 
 	public List<List<Byte>> returnTheList() {
@@ -28,52 +30,74 @@ public class ResultMatrix {
 		return resultShow;
 	}
 
-	public byte[][] displacementVert(List<List<Integer>> rows, int sizeColumn) {
+	private byte[] getRowFromMatrix(int row, int sizeColumn) {
 
 		byte[] handlerBase = new byte[sizeColumn];
 		for (int i = 0; i < handlerBase.length; i++) {
-			handlerBase[i] = 11;
+			handlerBase[i] = result[row][i];
+			if (handlerBase[i] != 1) {
+				handlerBase[i] = 11;
+			}
 		}
+		return handlerBase;
+	}
+
+	public byte[][] displacementVert(List<List<Integer>> rows, int sizeColumn) {
+
+		byte[] handlerBase = getRowFromMatrix(0, sizeColumn);
+
+//		System.out.println(Arrays.toString(handlerBase));
 
 		byte[] handler = new byte[sizeColumn];
 		List<Integer> indents = new ArrayList<>();
 
-		for (int row = 0; row < 1; row++) {
 //		for (int row = 0; row < rows.size(); row++) {					
 
-			int visual = 0;
+		int visual = 0;
+		int[] indent;
+		Integer summElement = rows.get(0).stream().reduce((left, right) -> left + right).get();
 
-			int increaseIndent = 0;
+		SearchCombinations searchCombinations = new SearchCombinations(rows.get(0).size(), summElement, sizeColumn);
 
-			this.finish = true;
-			while (this.finish) {
+		while (searchCombinations.countCombinations()) {
 
-				indents.clear();
-				indents = createIndents(rows.get(row), sizeColumn, 0, increaseIndent++);
-				handler = displacement(rows.get(row), sizeColumn, indents);
-				handlerBase = equalsLine(handlerBase, handler);
+			indent = searchCombinations.getIndent();
 
-				for (int j = 0; j < handler.length; j++) {
-					result[visual][j] = handler[j];
-				}
+			indents.clear();
+			indents = createIndents(rows.get(0), sizeColumn, indent);
+			handler = displacement(rows.get(0), sizeColumn, indents);
 
-				visual++;
-				if (visual > 20) {
-					visual = 20;
-				}
+			if (needEquals(handlerBase, handler)) {
+				equalsLine(handlerBase, handler);
 			}
+
+//			System.out.println(Arrays.toString(handlerBase));
+
+			for (int j = 0; j < handler.length; j++) {
+				result[visual][j] = handler[j];
+			}
+
+			visual++;
+			if (visual > 19) {
+				visual = 19;
+
+			} // while new
 
 			for (int j = 0; j < handler.length; j++) {
 				result[17][j] = 1;
 				result[18][j] = handlerBase[j];
 			}
 
-//			}
-
 //			for (int i = 0; i < handler.length; i++) {
 //				result[row][i] = handler[i];
-//			}
+		} // while
+		handlerBase = approve(handlerBase, summElement);
+
+		for (int j = 0; j < handlerBase.length; j++) {
+
+			result[18][j] = handlerBase[j];
 		}
+
 		return result;
 	}
 
@@ -85,7 +109,7 @@ public class ResultMatrix {
 		for (int column = 0; column < columns.size(); column++) {
 
 			indents.clear();
-			indents = createIndents(columns.get(column), sizeRow, 0, 0);
+			// indents = createIndents(columns.get(column), sizeRow, {0,0,0}, 0);
 			handler = displacement(columns.get(column), sizeRow, indents);
 
 			for (int i = 0; i < handler.length; i++) {
@@ -95,8 +119,7 @@ public class ResultMatrix {
 		return result;
 	}
 
-	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int indexIndentAdd,
-			int increaseIndent) {
+	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
 
 		List<Integer> indents = new ArrayList<>();
 
@@ -104,11 +127,7 @@ public class ResultMatrix {
 		int summAll = 0;
 		int indent = 0;
 
-		if (indexIndentAdd == 0) {
-			indents.add(increaseIndent);
-		} else {
-			indents.add(0);
-		}
+		indents.add(displace[0]);
 
 		summAll += indents.get(0);
 
@@ -118,16 +137,13 @@ public class ResultMatrix {
 			summAll += elementLength;
 
 			indent = 1;
-			if (indexIndentAdd == indElement + 1) {
-				indent = increaseIndent + 1;
+			if (indElement < rowOrColumn.size() - 1) {
+				indent = displace[indElement + 1] + 1;
 			}
 			summAll += indent;
 
 			if (indElement == rowOrColumn.size() - 1) {
 				indent = sizeColumnOrRow - summAll + 1;
-				if (indent == 0) {
-					this.finish = false;
-				}
 			}
 			indents.add(indent);
 		}
@@ -156,7 +172,6 @@ public class ResultMatrix {
 
 			lengthElement = rowOrColumn.get(indInnerList);
 			lengthIndent = indents.get(indInnerList + 1);
-
 			indexExit = indMatrix + lengthElement;
 
 			while (indMatrix < indexExit) {
@@ -170,26 +185,39 @@ public class ResultMatrix {
 					handler[indMatrix++] = 12;
 				}
 			}
-
 		}
-
 		return handler;
+	}
+
+	private boolean needEquals(byte[] base, byte[] handler) {
+
+		System.out.println("base      " + Arrays.toString(base));
+		System.out.println("handler   " + Arrays.toString(handler));
+
+		for (int i = 0; i < base.length; i++) {
+			if (base[i] == 1 && handler[i] != 11) {
+				return false;
+			}
+			if (base[i] == 2 && handler[i] != 12) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private byte[] equalsLine(byte[] base, byte[] handler) {
 
-		for (int i = 0; i < handler.length; i++) {
-
+		for (int i = 0; i < base.length; i++) {
 			switch (base[i]) {
-			case 1:				
+			case 1:
 				break;
-			case 2:				
-				break;				
+			case 2:
+				break;
 			case 11:
 				base[i] = handler[i];
 				break;
 			case 12:
-				if(handler[i] != 11) {
+				if (handler[i] != 11) {
 					base[i] = handler[i];
 				}
 				break;
@@ -197,7 +225,31 @@ public class ResultMatrix {
 				break;
 			}
 		}
+		return base;
+	}
 
+	private byte[] approve(byte[] base, int summElement) {
+
+		System.out.println("--------------base      " + Arrays.toString(base));
+
+		int countBlackElements = 0;
+
+		for (int i = 0; i < base.length; i++) {
+			if (base[i] == 11) {
+				base[i] = 1;
+			}
+			if (base[i] == 1) {
+				countBlackElements++;
+			}
+		}
+
+		if (countBlackElements == summElement) {
+			for (int i = 0; i < base.length; i++) {
+				if (base[i] != 1) {
+					base[i] = 2;
+				}
+			}
+		}
 		return base;
 	}
 
