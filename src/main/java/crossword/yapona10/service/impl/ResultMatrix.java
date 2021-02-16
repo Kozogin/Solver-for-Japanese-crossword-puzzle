@@ -8,12 +8,10 @@ public class ResultMatrix {
 
 	private byte[][] result;
 
-//	private boolean finish;
-
 	public ResultMatrix(byte[][] result) {
 		this.result = result;
-		this.result[0][2] = 1;
-		this.result[0][7] = 1;
+//		this.result[0][2] = 1;
+//		this.result[0][7] = 1;
 	}
 
 	public List<List<Byte>> returnTheList() {
@@ -44,60 +42,43 @@ public class ResultMatrix {
 
 	public byte[][] displacementVert(List<List<Integer>> rows, int sizeColumn) {
 
-		byte[] handlerBase = getRowFromMatrix(0, sizeColumn);
-
-//		System.out.println(Arrays.toString(handlerBase));
-
 		byte[] handler = new byte[sizeColumn];
+		byte[] handlerBase;
+		int summElement;
+
 		List<Integer> indents = new ArrayList<>();
 
-//		for (int row = 0; row < rows.size(); row++) {					
+		for (int row = 0; row < rows.size(); row++) {
 
-		int visual = 0;
-		int[] indent;
-		Integer summElement = rows.get(0).stream().reduce((left, right) -> left + right).get();
+			handlerBase = getRowFromMatrix(row, sizeColumn);
+			int[] indent;
+			summElement = rows.get(row).stream().reduce((left, right) -> left + right).get();
 
-		SearchCombinations searchCombinations = new SearchCombinations(rows.get(0).size(), summElement, sizeColumn);
+			SearchCombinations searchCombinations = new SearchCombinations(rows.get(row).size(), summElement,
+					sizeColumn);
 
-		while (searchCombinations.countCombinations()) {
+			while (searchCombinations.countCombinations()) {
 
-			indent = searchCombinations.getIndent();
+				indent = searchCombinations.getIndent();
 
-			indents.clear();
-			indents = createIndents(rows.get(0), sizeColumn, indent);
-			handler = displacement(rows.get(0), sizeColumn, indents);
+				indents.clear();
+				indents = createIndents(rows.get(row), sizeColumn, indent);
+				handler = displacement(rows.get(row), sizeColumn, indents);
 
-			if (needEquals(handlerBase, handler)) {
-				equalsLine(handlerBase, handler);
-			}
-
-//			System.out.println(Arrays.toString(handlerBase));
-
-			for (int j = 0; j < handler.length; j++) {
-				result[visual][j] = handler[j];
-			}
-
-			visual++;
-			if (visual > 19) {
-				visual = 19;
+				if (needEquals(handlerBase, handler)) {
+					equalsLine(handlerBase, handler);
+				}
 
 			} // while new
+			
+			handlerBase = approve(handlerBase, summElement);
 
-			for (int j = 0; j < handler.length; j++) {
-				result[17][j] = 1;
-				result[18][j] = handlerBase[j];
+			for (int i = 0; i < handlerBase.length; i++) {
+				result[row][i] = handlerBase[i];
 			}
 
-//			for (int i = 0; i < handler.length; i++) {
-//				result[row][i] = handler[i];
-		} // while
-		handlerBase = approve(handlerBase, summElement);
-
-		for (int j = 0; j < handlerBase.length; j++) {
-
-			result[18][j] = handlerBase[j];
+			
 		}
-
 		return result;
 	}
 
@@ -109,7 +90,6 @@ public class ResultMatrix {
 		for (int column = 0; column < columns.size(); column++) {
 
 			indents.clear();
-			// indents = createIndents(columns.get(column), sizeRow, {0,0,0}, 0);
 			handler = displacement(columns.get(column), sizeRow, indents);
 
 			for (int i = 0; i < handler.length; i++) {
