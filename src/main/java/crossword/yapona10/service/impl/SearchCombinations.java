@@ -21,11 +21,23 @@ public class SearchCombinations {
 	}
 
 	public boolean countCombinations() {
+		
+		if(this.sumAllIndent == 0) {					//
+			for (int i = 0; i < indent.length; i++) {	//
+				indent[i] = 0;							//
+			}									//
+			return false;								//
+		}												//
 
 		if (summArray() + 1 > this.sumAllIndent) {
 
 			this.actualyIndex = 0;
 			do {
+				
+//				if(this.actualyIndex >= this.numberElement) {	//
+//					this.actualyIndex--;					//
+//				}											//
+				
 				this.indent[this.actualyIndex] = 0;
 				this.actualyIndex++;
 			} while (summArray() >= this.sumAllIndent);

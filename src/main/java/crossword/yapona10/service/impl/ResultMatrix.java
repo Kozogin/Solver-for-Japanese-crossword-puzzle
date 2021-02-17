@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import crossword.yapona10.domain.ItemStatus;
+
 public class ResultMatrix {
 
 	private byte[][] result;
@@ -33,8 +35,21 @@ public class ResultMatrix {
 		byte[] handlerBase = new byte[sizeColumn];
 		for (int i = 0; i < handlerBase.length; i++) {
 			handlerBase[i] = result[row][i];
-			if (handlerBase[i] != 1) {
-				handlerBase[i] = 11;
+			if (handlerBase[i] != ItemStatus.BLACK.ordinal()) {
+				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
+			}
+		}
+		return handlerBase;
+	}
+	
+	
+	private byte[] getColumnFromMatrix(int column, int sizeRow) {
+
+		byte[] handlerBase = new byte[sizeRow];
+		for (int i = 0; i < handlerBase.length; i++) {
+			handlerBase[i] = result[i][column];
+			if (handlerBase[i] != ItemStatus.BLACK.ordinal()) {
+				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
 			}
 		}
 		return handlerBase;
@@ -57,10 +72,11 @@ public class ResultMatrix {
 			SearchCombinations searchCombinations = new SearchCombinations(rows.get(row).size(), summElement,
 					sizeColumn);
 
-			while (searchCombinations.countCombinations()) {
+			searchCombinations.countCombinations();
+
+			do {
 
 				indent = searchCombinations.getIndent();
-
 				indents.clear();
 				indents = createIndents(rows.get(row), sizeColumn, indent);
 				handler = displacement(rows.get(row), sizeColumn, indents);
@@ -69,37 +85,80 @@ public class ResultMatrix {
 					equalsLine(handlerBase, handler);
 				}
 
-			} // while new
-			
+			} while (searchCombinations.countCombinations());
+
 			handlerBase = approve(handlerBase, summElement);
 
 			for (int i = 0; i < handlerBase.length; i++) {
 				result[row][i] = handlerBase[i];
 			}
 
-			
 		}
 		return result;
 	}
 
 	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
-
+		
 		byte[] handler = new byte[sizeRow];
+		byte[] handlerBase;
+		int summElement;
+
 		List<Integer> indents = new ArrayList<>();
 
 		for (int column = 0; column < columns.size(); column++) {
 
-			indents.clear();
-			handler = displacement(columns.get(column), sizeRow, indents);
+			handlerBase = getColumnFromMatrix(column, sizeRow);
+			int[] indent;
+			summElement = columns.get(column).stream().reduce((left, right) -> left + right).get();
 
-			for (int i = 0; i < handler.length; i++) {
-				result[i][column] = handler[i];
+			SearchCombinations searchCombinations = new SearchCombinations(columns.get(column).size(), summElement,
+					sizeRow);
+
+			searchCombinations.countCombinations();
+
+			do {
+
+				indent = searchCombinations.getIndent();
+				indents.clear();
+				indents = createIndents(columns.get(column), sizeRow, indent);
+				handler = displacement(columns.get(column), sizeRow, indents);
+
+				if (needEquals(handlerBase, handler)) {
+					equalsLine(handlerBase, handler);
+				}
+
+			} while (searchCombinations.countCombinations());
+
+			handlerBase = approve(handlerBase, summElement);
+
+			for (int i = 0; i < handlerBase.length; i++) {
+				result[i][column] = handlerBase[i];
 			}
+
 		}
 		return result;
 	}
 
+//	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
+//
+//		byte[] handler = new byte[sizeRow];
+//		List<Integer> indents = new ArrayList<>();
+//
+//		for (int column = 0; column < columns.size(); column++) {
+//
+//			indents.clear();
+//			handler = displacement(columns.get(column), sizeRow, indents);
+//
+//			for (int i = 0; i < handler.length; i++) {
+//				result[i][column] = handler[i];
+//			}
+//		}
+//		return result;
+//	}
+
 	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
+
+		System.out.println(Arrays.toString(displace));
 
 		List<Integer> indents = new ArrayList<>();
 
@@ -144,7 +203,7 @@ public class ResultMatrix {
 
 		if (indents.get(0) != 0) {
 			while (indMatrix < indexExit) {
-				handler[indMatrix++] = 12;
+				handler[indMatrix++] = (byte) ItemStatus.LIGHT.ordinal();
 			}
 		}
 
@@ -155,14 +214,14 @@ public class ResultMatrix {
 			indexExit = indMatrix + lengthElement;
 
 			while (indMatrix < indexExit) {
-				handler[indMatrix++] = 11;
+				handler[indMatrix++] = (byte) ItemStatus.DARK.ordinal();
 			}
 
 			indexExit += lengthIndent;
 
 			if (indMatrix < sizeColumnOrRow || indexExit < sizeColumnOrRow) {
 				while (indMatrix < indexExit) {
-					handler[indMatrix++] = 12;
+					handler[indMatrix++] = (byte) ItemStatus.LIGHT.ordinal();
 				}
 			}
 		}
@@ -175,10 +234,10 @@ public class ResultMatrix {
 		System.out.println("handler   " + Arrays.toString(handler));
 
 		for (int i = 0; i < base.length; i++) {
-			if (base[i] == 1 && handler[i] != 11) {
+			if (base[i] == ItemStatus.BLACK.ordinal() && handler[i] != ItemStatus.DARK.ordinal()) {
 				return false;
 			}
-			if (base[i] == 2 && handler[i] != 12) {
+			if (base[i] == ItemStatus.WHITE.ordinal() && handler[i] != ItemStatus.LIGHT.ordinal()) {
 				return false;
 			}
 		}
@@ -193,11 +252,11 @@ public class ResultMatrix {
 				break;
 			case 2:
 				break;
-			case 11:
+			case 3:
 				base[i] = handler[i];
 				break;
-			case 12:
-				if (handler[i] != 11) {
+			case 4:
+				if (handler[i] != ItemStatus.DARK.ordinal()) {
 					base[i] = handler[i];
 				}
 				break;
@@ -215,18 +274,18 @@ public class ResultMatrix {
 		int countBlackElements = 0;
 
 		for (int i = 0; i < base.length; i++) {
-			if (base[i] == 11) {
-				base[i] = 1;
+			if (base[i] == ItemStatus.DARK.ordinal()) {
+				base[i] = (byte) ItemStatus.BLACK.ordinal();
 			}
-			if (base[i] == 1) {
+			if (base[i] == ItemStatus.BLACK.ordinal()) {
 				countBlackElements++;
 			}
 		}
 
 		if (countBlackElements == summElement) {
 			for (int i = 0; i < base.length; i++) {
-				if (base[i] != 1) {
-					base[i] = 2;
+				if (base[i] != ItemStatus.BLACK.ordinal()) {
+					base[i] = (byte) ItemStatus.WHITE.ordinal();
 				}
 			}
 		}

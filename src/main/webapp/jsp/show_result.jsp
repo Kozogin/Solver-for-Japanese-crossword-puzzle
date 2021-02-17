@@ -49,11 +49,11 @@
 										</c:if>
 										
 										
-										<c:if test="${showCrossword_pixel == 12}">
+										<c:if test="${showCrossword_pixel == 4}">
 											<td class="light-handler"></td>
 										</c:if>
 
-										<c:if test="${showCrossword_pixel == 11}">
+										<c:if test="${showCrossword_pixel == 3}">
 											<td class="dark-handler"></td>
 										</c:if>
 										
