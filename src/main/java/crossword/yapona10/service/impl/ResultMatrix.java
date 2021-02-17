@@ -12,8 +12,6 @@ public class ResultMatrix {
 
 	public ResultMatrix(byte[][] result) {
 		this.result = result;
-//		this.result[0][2] = 1;
-//		this.result[0][7] = 1;
 	}
 
 	public List<List<Byte>> returnTheList() {
@@ -35,7 +33,7 @@ public class ResultMatrix {
 		byte[] handlerBase = new byte[sizeColumn];
 		for (int i = 0; i < handlerBase.length; i++) {
 			handlerBase[i] = result[row][i];
-			if (handlerBase[i] != ItemStatus.BLACK.ordinal()) {
+			if (handlerBase[i] != ItemStatus.BLACK.ordinal() && handlerBase[i] != ItemStatus.WHITE.ordinal()) {
 				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
 			}
 		}
@@ -48,7 +46,7 @@ public class ResultMatrix {
 		byte[] handlerBase = new byte[sizeRow];
 		for (int i = 0; i < handlerBase.length; i++) {
 			handlerBase[i] = result[i][column];
-			if (handlerBase[i] != ItemStatus.BLACK.ordinal()) {
+			if (handlerBase[i] != ItemStatus.BLACK.ordinal() && handlerBase[i] != ItemStatus.WHITE.ordinal()) {
 				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
 			}
 		}
@@ -138,23 +136,7 @@ public class ResultMatrix {
 		}
 		return result;
 	}
-
-//	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
-//
-//		byte[] handler = new byte[sizeRow];
-//		List<Integer> indents = new ArrayList<>();
-//
-//		for (int column = 0; column < columns.size(); column++) {
-//
-//			indents.clear();
-//			handler = displacement(columns.get(column), sizeRow, indents);
-//
-//			for (int i = 0; i < handler.length; i++) {
-//				result[i][column] = handler[i];
-//			}
-//		}
-//		return result;
-//	}
+	
 
 	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
 

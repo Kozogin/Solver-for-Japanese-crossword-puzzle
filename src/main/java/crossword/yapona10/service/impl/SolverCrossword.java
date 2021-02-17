@@ -44,13 +44,9 @@ public class SolverCrossword {
 		resultMatrix = new ResultMatrix(matrix);
 
 		int conditionExit = 0;
-		while (conditionExit++ < 8) {
-
+		while (conditionExit++ < 20) {
 			resultMatrix.displacementVert(vert, horizontal_column);
-//			List<List<Byte>> returnTheList = resultMatrix.returnTheList();
-
 			resultMatrix.displacementHorz(horz, vertical_row);
-//			List<List<Byte>> returnTheList = resultMatrix.returnTheList();
 		}
 		List<List<Byte>> returnTheList = resultMatrix.returnTheList();
 
