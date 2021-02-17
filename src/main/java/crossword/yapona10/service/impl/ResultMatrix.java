@@ -9,9 +9,11 @@ import crossword.yapona10.domain.ItemStatus;
 public class ResultMatrix {
 
 	private byte[][] result;
+	private int countSuccessfulCombination;
 
 	public ResultMatrix(byte[][] result) {
 		this.result = result;
+		countSuccessfulCombination = 0;
 	}
 
 	public List<List<Byte>> returnTheList() {
@@ -39,8 +41,7 @@ public class ResultMatrix {
 		}
 		return handlerBase;
 	}
-	
-	
+
 	private byte[] getColumnFromMatrix(int column, int sizeRow) {
 
 		byte[] handlerBase = new byte[sizeRow];
@@ -53,16 +54,30 @@ public class ResultMatrix {
 		return handlerBase;
 	}
 
+	private byte[] fillLight(byte[] space) {
+
+		for (int i = 0; i < space.length; i++) {
+			space[i] = (byte) ItemStatus.LIGHT.ordinal();
+		}
+		return space;
+	}
+
 	public byte[][] displacementVert(List<List<Integer>> rows, int sizeColumn) {
 
 		byte[] handler = new byte[sizeColumn];
 		byte[] handlerBase;
+		byte[] handlerLight = new byte[sizeColumn];
+
 		int summElement;
 
 		List<Integer> indents = new ArrayList<>();
 
 		for (int row = 0; row < rows.size(); row++) {
 
+			System.out.println(
+					"----------------------new row " + row + " -----------------------------------------------");
+
+			handlerLight = fillLight(handlerLight);
 			handlerBase = getRowFromMatrix(row, sizeColumn);
 			int[] indent;
 			summElement = rows.get(row).stream().reduce((left, right) -> left + right).get();
@@ -81,11 +96,13 @@ public class ResultMatrix {
 
 				if (needEquals(handlerBase, handler)) {
 					equalsLine(handlerBase, handler);
+					equalsLight(handlerLight, handler);
 				}
 
 			} while (searchCombinations.countCombinations());
 
 			handlerBase = approve(handlerBase, summElement);
+			handlerBase = equalsBaseLight(handlerBase, handlerLight);
 
 			for (int i = 0; i < handlerBase.length; i++) {
 				result[row][i] = handlerBase[i];
@@ -96,15 +113,21 @@ public class ResultMatrix {
 	}
 
 	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
-		
+
 		byte[] handler = new byte[sizeRow];
 		byte[] handlerBase;
+		byte[] handlerLight = new byte[sizeRow];
+
 		int summElement;
 
 		List<Integer> indents = new ArrayList<>();
 
 		for (int column = 0; column < columns.size(); column++) {
 
+			System.out.println(
+					"----------------------new column " + column + "-----------------------------------------------");
+
+			handlerLight = fillLight(handlerLight);
 			handlerBase = getColumnFromMatrix(column, sizeRow);
 			int[] indent;
 			summElement = columns.get(column).stream().reduce((left, right) -> left + right).get();
@@ -123,33 +146,29 @@ public class ResultMatrix {
 
 				if (needEquals(handlerBase, handler)) {
 					equalsLine(handlerBase, handler);
+					equalsLight(handlerLight, handler);
 				}
 
 			} while (searchCombinations.countCombinations());
 
 			handlerBase = approve(handlerBase, summElement);
+			handlerBase = equalsBaseLight(handlerBase, handlerLight);
 
 			for (int i = 0; i < handlerBase.length; i++) {
 				result[i][column] = handlerBase[i];
 			}
-
 		}
 		return result;
 	}
-	
 
 	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
 
-		System.out.println(Arrays.toString(displace));
-
 		List<Integer> indents = new ArrayList<>();
-
 		int elementLength = 0;
 		int summAll = 0;
 		int indent = 0;
 
 		indents.add(displace[0]);
-
 		summAll += indents.get(0);
 
 		for (int indElement = 0; indElement < rowOrColumn.size(); indElement++) {
@@ -212,9 +231,6 @@ public class ResultMatrix {
 
 	private boolean needEquals(byte[] base, byte[] handler) {
 
-		System.out.println("base      " + Arrays.toString(base));
-		System.out.println("handler   " + Arrays.toString(handler));
-
 		for (int i = 0; i < base.length; i++) {
 			if (base[i] == ItemStatus.BLACK.ordinal() && handler[i] != ItemStatus.DARK.ordinal()) {
 				return false;
@@ -225,8 +241,33 @@ public class ResultMatrix {
 		}
 		return true;
 	}
+	
+	private byte[] equalsBaseLight(byte[] base, byte[] handlerLight) {
+		
+		for (int i = 0; i < base.length; i++) {			
+		if(handlerLight[i] == ItemStatus.LIGHT.ordinal()) {
+			base[i] = (byte) ItemStatus.WHITE.ordinal();
+		}
+	}		
+		return base;		
+	}
+	
+	private byte[] equalsLight(byte[] handlerLight, byte[] handler) {
+		
+		for (int i = 0; i < handlerLight.length; i++) {			
+		if(handler[i] == ItemStatus.DARK.ordinal()) {
+			handlerLight[i] = (byte) ItemStatus.DARK.ordinal();
+		}
+	}		
+		return handlerLight;		
+	}
 
 	private byte[] equalsLine(byte[] base, byte[] handler) {
+
+		System.out.println("base      " + Arrays.toString(base));
+		System.out.println("handler   " + Arrays.toString(handler));
+
+		countSuccessfulCombination++;
 
 		for (int i = 0; i < base.length; i++) {
 			switch (base[i]) {
@@ -251,7 +292,7 @@ public class ResultMatrix {
 
 	private byte[] approve(byte[] base, int summElement) {
 
-		System.out.println("--------------base      " + Arrays.toString(base));
+//		System.out.println("--------------base      " + Arrays.toString(base));
 
 		int countBlackElements = 0;
 
@@ -280,6 +321,14 @@ public class ResultMatrix {
 
 	public void setResult(byte[][] result) {
 		this.result = result;
+	}
+
+	public int getCountSuccessfulCombination() {
+		return countSuccessfulCombination;
+	}
+
+	public void setCountSuccessfulCombination(int countSuccessfulCombination) {
+		this.countSuccessfulCombination = countSuccessfulCombination;
 	}
 
 }

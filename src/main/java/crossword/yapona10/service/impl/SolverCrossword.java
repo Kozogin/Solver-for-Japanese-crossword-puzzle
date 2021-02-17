@@ -32,21 +32,34 @@ public class SolverCrossword {
 
 	public List<List<Byte>> solver() {
 
-		List<List<Integer>> vert = vertHorizPullNumber(vertical);
-		System.out.println(vert);
-		List<List<Integer>> horz = vertHorizPullNumber(horizontal);
-		System.out.println(horz);
+		List<List<Integer>> vert = vertHorizPullNumber(vertical);		
+		List<List<Integer>> horz = vertHorizPullNumber(horizontal);		
 
 		vertical_row = vert.size();
 		horizontal_column = horz.size();
 
 		byte[][] matrix = new byte[vertical_row][horizontal_column];
 		resultMatrix = new ResultMatrix(matrix);
-
-		int conditionExit = 0;
-		while (conditionExit++ < 20) {
-			resultMatrix.displacementVert(vert, horizontal_column);
-			resultMatrix.displacementHorz(horz, vertical_row);
+		int countAllCombination = 0;
+		int countAllCombinationPrevious = 0;
+		
+		boolean conditionExit = true;
+		while (conditionExit) {
+			resultMatrix.setCountSuccessfulCombination(0);
+				resultMatrix.displacementVert(vert, horizontal_column);
+				resultMatrix.displacementHorz(horz, vertical_row);
+			countAllCombination = resultMatrix.getCountSuccessfulCombination();	
+			
+					System.out.println("-----]]]]]]]]]][[[[[[[[[[[[[[]]]]]]]]]]]]]][[[[[[[[");
+					System.out.println(countAllCombinationPrevious);
+					System.out.println(countAllCombination);
+					
+			if(countAllCombination == countAllCombinationPrevious) {
+				conditionExit = false;
+			}			
+			countAllCombinationPrevious = countAllCombination;
+				
+					
 		}
 		List<List<Byte>> returnTheList = resultMatrix.returnTheList();
 
