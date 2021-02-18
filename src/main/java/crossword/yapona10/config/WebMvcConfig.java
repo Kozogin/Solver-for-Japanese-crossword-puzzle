@@ -1,3 +1,13 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Class crossword.yapona10.config.WebMvcConfig  - configuration layer
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.config;
 
 import java.util.Locale;

@@ -43,18 +43,12 @@
 				</c:forEach>
 				
 				<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+			
 			</form:form>
-			
-<!-- /////////////////////////////////////////////////////////////////////  -->
-			
-			
-<!-- /////////////////////////////////////////////////////////////////////  -->
-
+			<br><br><br><br>
 		</div>
+		
 	</div>
-
-
-
 
 </body>
 </html>

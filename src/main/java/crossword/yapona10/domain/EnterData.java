@@ -1,3 +1,13 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Class crossword.yapona10.domain.EnterData  - domain layer
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.domain;
 
 import javax.persistence.Column;
@@ -14,12 +24,15 @@ public class EnterData {
 	@GeneratedValue
 	private Integer id;
 	
+	/* Number crossword for read from DB*/
 	@Column
 	private Integer crossword;
 	
+	/* Number row or column (with sign -)*/
 	@Column
 	private Integer rowNum;	
 	
+	/* String line with data (are entered through a comma)*/
 	@Column
 	private String lineNumbers;
 

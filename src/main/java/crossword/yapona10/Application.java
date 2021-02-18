@@ -1,3 +1,13 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Spring application
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10;
 
 import org.springframework.boot.SpringApplication;

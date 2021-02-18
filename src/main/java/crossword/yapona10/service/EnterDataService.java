@@ -1,3 +1,13 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ *Interface crossword.yapona10.service.EnterDataService  - service layer
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.service;
 
 import java.util.List;

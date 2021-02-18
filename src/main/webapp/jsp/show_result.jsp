@@ -47,6 +47,16 @@
 										<c:if test="${showCrossword_pixel == 0}">
 											<td class="blue"></td>
 										</c:if>
+										
+										
+										<c:if test="${showCrossword_pixel == 4}">
+											<td class="light-handler"></td>
+										</c:if>
+
+										<c:if test="${showCrossword_pixel == 3}">
+											<td class="dark-handler"></td>
+										</c:if>
+										
 
 									</c:forEach>
 								</tr>
