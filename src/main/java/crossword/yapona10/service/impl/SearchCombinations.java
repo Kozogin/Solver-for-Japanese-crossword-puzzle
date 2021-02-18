@@ -1,13 +1,28 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Class crossword.yapona10.service.impl.SearchCombinations  - service implementation layer
+ * This is a counter designed to generate all possible combinations of element indents
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.service.impl;
 
 public class SearchCombinations {
-
-	private int[] indent;
+	
+	/* array of indents, counter status*/
+	private int[] indent;	
 	private int numberElement;
 	private int summElement;
 	private int matrixLength;
+	
+	/* max sum all indents should not exceed this value*/
 	private int sumAllIndent;
-
+	
+	/* number index array*/
 	private int actualyIndex;
 
 	public SearchCombinations(int numberElement, int summElement, int matrixLength) {
@@ -17,26 +32,28 @@ public class SearchCombinations {
 		this.actualyIndex = 0;
 		this.sumAllIndent = matrixLength - (summElement + numberElement - 1);
 		this.indent = new int[numberElement];
+		
+		/* preset counter to set the zero displacement*/
 		this.indent[0] = -1;
 	}
-
+	
+	
 	public boolean countCombinations() {
 		
-		if(this.sumAllIndent == 0) {					//
-			for (int i = 0; i < indent.length; i++) {	//
-				indent[i] = 0;							//
-			}									//
-			return false;								//
-		}												//
-
+		/* condition for exit (all the combinations found)*/
+		if(this.sumAllIndent == 0) {					
+			for (int i = 0; i < indent.length; i++) {	
+				indent[i] = 0;							
+			}									
+			return false;								
+		}		
+		
+		/* if sum array more than needed to incremented next digit number
+		 and clear previous digit number*/
 		if (summArray() + 1 > this.sumAllIndent) {
 
 			this.actualyIndex = 0;
 			do {
-				
-//				if(this.actualyIndex >= this.numberElement) {	//
-//					this.actualyIndex--;					//
-//				}											//
 				
 				this.indent[this.actualyIndex] = 0;
 				this.actualyIndex++;

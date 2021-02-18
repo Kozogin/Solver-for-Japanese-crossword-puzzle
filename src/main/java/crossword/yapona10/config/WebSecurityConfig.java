@@ -1,3 +1,13 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Class crossword.yapona10.config.WebSecurityConfig  - configuration layer
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.config;
 
 import org.springframework.context.annotation.Configuration;

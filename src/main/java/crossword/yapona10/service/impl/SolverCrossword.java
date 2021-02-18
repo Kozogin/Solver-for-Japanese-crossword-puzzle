@@ -1,3 +1,14 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Class crossword.yapona10.service.impl.SolverCrossword  - service implementation layer
+ * This class implements the basic logic
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.service.impl;
 
 import java.util.ArrayList;
@@ -30,6 +41,10 @@ public class SolverCrossword {
 		this.horizontal = horizontal;
 	}
 
+	/* Main method.
+	method implements control of all logic from reading of data, solving of a  
+	crossword puzzle, formation of result for jsp page
+	*/
 	public List<List<Byte>> solver() {
 
 		List<List<Integer>> vert = vertHorizPullNumber(vertical);		
@@ -48,24 +63,19 @@ public class SolverCrossword {
 			resultMatrix.setCountSuccessfulCombination(0);
 				resultMatrix.displacementVert(vert, horizontal_column);
 				resultMatrix.displacementHorz(horz, vertical_row);
-			countAllCombination = resultMatrix.getCountSuccessfulCombination();	
-			
-					System.out.println("-----]]]]]]]]]][[[[[[[[[[[[[[]]]]]]]]]]]]]][[[[[[[[");
-					System.out.println(countAllCombinationPrevious);
-					System.out.println(countAllCombination);
+			countAllCombination = resultMatrix.getCountSuccessfulCombination();
 					
 			if(countAllCombination == countAllCombinationPrevious) {
 				conditionExit = false;
 			}			
 			countAllCombinationPrevious = countAllCombination;
-				
-					
 		}
 		List<List<Byte>> returnTheList = resultMatrix.returnTheList();
 
 		return returnTheList;
 	}
 
+	//* parse array data from form or DB into list Integer*/
 	private List<List<Integer>> vertHorizPullNumber(String[] array) {
 
 		List<List<Integer>> verticalAndHorozontal = new ArrayList<>();

@@ -1,3 +1,13 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ *Interface crossword.yapona10.repository.EnterDataRepository  - repository layer
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.repository;
 
 import java.util.List;

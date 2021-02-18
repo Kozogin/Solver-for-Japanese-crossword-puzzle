@@ -1,21 +1,35 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Class crossword.yapona10.service.impl.ResultMatrix  - service implementation layer
+ * Methods for the solver
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import crossword.yapona10.domain.ItemStatus;
 
 public class ResultMatrix {
-
+	
+	/* matrix for data processing*/
 	private byte[][] result;
+	
+	/* counter iteration cycle, considers all combinations are not empty 
+	 in the vertical and horizontal processing*/
 	private int countSuccessfulCombination;
 
 	public ResultMatrix(byte[][] result) {
 		this.result = result;
 		countSuccessfulCombination = 0;
 	}
-
+	
+	/* array to list*/
 	public List<List<Byte>> returnTheList() {
 
 		List<List<Byte>> resultShow = new ArrayList<>();
@@ -30,38 +44,7 @@ public class ResultMatrix {
 		return resultShow;
 	}
 
-	private byte[] getRowFromMatrix(int row, int sizeColumn) {
-
-		byte[] handlerBase = new byte[sizeColumn];
-		for (int i = 0; i < handlerBase.length; i++) {
-			handlerBase[i] = result[row][i];
-			if (handlerBase[i] != ItemStatus.BLACK.ordinal() && handlerBase[i] != ItemStatus.WHITE.ordinal()) {
-				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
-			}
-		}
-		return handlerBase;
-	}
-
-	private byte[] getColumnFromMatrix(int column, int sizeRow) {
-
-		byte[] handlerBase = new byte[sizeRow];
-		for (int i = 0; i < handlerBase.length; i++) {
-			handlerBase[i] = result[i][column];
-			if (handlerBase[i] != ItemStatus.BLACK.ordinal() && handlerBase[i] != ItemStatus.WHITE.ordinal()) {
-				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
-			}
-		}
-		return handlerBase;
-	}
-
-	private byte[] fillLight(byte[] space) {
-
-		for (int i = 0; i < space.length; i++) {
-			space[i] = (byte) ItemStatus.LIGHT.ordinal();
-		}
-		return space;
-	}
-
+	/* starts the mechanism displacement elements all the rows */
 	public byte[][] displacementVert(List<List<Integer>> rows, int sizeColumn) {
 
 		byte[] handler = new byte[sizeColumn];
@@ -73,10 +56,7 @@ public class ResultMatrix {
 		List<Integer> indents = new ArrayList<>();
 
 		for (int row = 0; row < rows.size(); row++) {
-
-			System.out.println(
-					"----------------------new row " + row + " -----------------------------------------------");
-
+				
 			handlerLight = fillLight(handlerLight);
 			handlerBase = getRowFromMatrix(row, sizeColumn);
 			int[] indent;
@@ -112,6 +92,7 @@ public class ResultMatrix {
 		return result;
 	}
 
+	/* starts the mechanism displacement elements all the column */
 	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
 
 		byte[] handler = new byte[sizeRow];
@@ -123,10 +104,7 @@ public class ResultMatrix {
 		List<Integer> indents = new ArrayList<>();
 
 		for (int column = 0; column < columns.size(); column++) {
-
-			System.out.println(
-					"----------------------new column " + column + "-----------------------------------------------");
-
+			
 			handlerLight = fillLight(handlerLight);
 			handlerBase = getColumnFromMatrix(column, sizeRow);
 			int[] indent;
@@ -160,8 +138,10 @@ public class ResultMatrix {
 		}
 		return result;
 	}
-
-	public List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
+	
+	/* calculates the last indent, return array indents, 
+	 [] displace parameter - all the combination indents */
+	private List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
 
 		List<Integer> indents = new ArrayList<>();
 		int elementLength = 0;
@@ -190,7 +170,10 @@ public class ResultMatrix {
 		return indents;
 	}
 
-	public byte[] displacement(List<Integer> rowOrColumn, int sizeColumnOrRow, List<Integer> indents) {
+	/* calculate line matrix, uses List<Integer> indent for generated all the 
+	 combination position, if indent = {0,0 ... 0}, elements are positioned with 
+	 a single indent from the beginning*/
+	private byte[] displacement(List<Integer> rowOrColumn, int sizeColumnOrRow, List<Integer> indents) {
 
 		byte[] handler = new byte[sizeColumnOrRow];
 
@@ -227,8 +210,33 @@ public class ResultMatrix {
 			}
 		}
 		return handler;
+	}	
+	
+	private byte[] getRowFromMatrix(int row, int sizeColumn) {
+
+		byte[] handlerBase = new byte[sizeColumn];
+		for (int i = 0; i < handlerBase.length; i++) {
+			handlerBase[i] = result[row][i];
+			if (handlerBase[i] != ItemStatus.BLACK.ordinal() && handlerBase[i] != ItemStatus.WHITE.ordinal()) {
+				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
+			}
+		}
+		return handlerBase;
 	}
 
+	private byte[] getColumnFromMatrix(int column, int sizeRow) {
+
+		byte[] handlerBase = new byte[sizeRow];
+		for (int i = 0; i < handlerBase.length; i++) {
+			handlerBase[i] = result[i][column];
+			if (handlerBase[i] != ItemStatus.BLACK.ordinal() && handlerBase[i] != ItemStatus.WHITE.ordinal()) {
+				handlerBase[i] = (byte) ItemStatus.DARK.ordinal();
+			}
+		}
+		return handlerBase;
+	}	
+
+	/* if generated line rightly superimposed on the base line, check on black element*/
 	private boolean needEquals(byte[] base, byte[] handler) {
 
 		for (int i = 0; i < base.length; i++) {
@@ -242,30 +250,16 @@ public class ResultMatrix {
 		return true;
 	}
 	
-	private byte[] equalsBaseLight(byte[] base, byte[] handlerLight) {
-		
-		for (int i = 0; i < base.length; i++) {			
-		if(handlerLight[i] == ItemStatus.LIGHT.ordinal()) {
-			base[i] = (byte) ItemStatus.WHITE.ordinal();
+	private byte[] fillLight(byte[] space) {
+
+		for (int i = 0; i < space.length; i++) {
+			space[i] = (byte) ItemStatus.LIGHT.ordinal();
 		}
-	}		
-		return base;		
+		return space;
 	}
 	
-	private byte[] equalsLight(byte[] handlerLight, byte[] handler) {
-		
-		for (int i = 0; i < handlerLight.length; i++) {			
-		if(handler[i] == ItemStatus.DARK.ordinal()) {
-			handlerLight[i] = (byte) ItemStatus.DARK.ordinal();
-		}
-	}		
-		return handlerLight;		
-	}
-
+	/* if generated line rightly superimposed on the base line, check on black element*/
 	private byte[] equalsLine(byte[] base, byte[] handler) {
-
-		System.out.println("base      " + Arrays.toString(base));
-		System.out.println("handler   " + Arrays.toString(handler));
 
 		countSuccessfulCombination++;
 
@@ -289,10 +283,20 @@ public class ResultMatrix {
 		}
 		return base;
 	}
+	
+	/* if generated line rightly superimposed on the base line, check on white element*/
+	private byte[] equalsLight(byte[] handlerLight, byte[] handler) {
+		
+		for (int i = 0; i < handlerLight.length; i++) {			
+		if(handler[i] == ItemStatus.DARK.ordinal()) {
+			handlerLight[i] = (byte) ItemStatus.DARK.ordinal();
+		}
+	}		
+		return handlerLight;		
+	}
 
+	/* approve base line, after all the combination*/
 	private byte[] approve(byte[] base, int summElement) {
-
-//		System.out.println("--------------base      " + Arrays.toString(base));
 
 		int countBlackElements = 0;
 
@@ -313,6 +317,17 @@ public class ResultMatrix {
 			}
 		}
 		return base;
+	}
+	
+	/* overlay white line on base, after all the combination*/
+	private byte[] equalsBaseLight(byte[] base, byte[] handlerLight) {
+		
+		for (int i = 0; i < base.length; i++) {			
+		if(handlerLight[i] == ItemStatus.LIGHT.ordinal()) {
+			base[i] = (byte) ItemStatus.WHITE.ordinal();
+		}
+	}		
+		return base;		
 	}
 
 	public byte[][] getResult() {

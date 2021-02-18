@@ -1,3 +1,13 @@
+/**
+ * Japanese crossword puzzle solver
+ * My own project
+ *
+ * Class crossword.yapona10.controller.EnterDataController  - conrtoller layer
+ *
+ * @author Vasil Kozogin
+ *
+ */
+
 package crossword.yapona10.controller;
 
 import java.io.IOException;
