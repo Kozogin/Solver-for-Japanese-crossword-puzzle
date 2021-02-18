@@ -16,20 +16,22 @@ import java.util.List;
 import crossword.yapona10.domain.ItemStatus;
 
 public class ResultMatrix {
-	
-	/* matrix for data processing*/
+
+	/* matrix for data processing */
 	private byte[][] result;
-	
-	/* counter iteration cycle, considers all combinations are not empty 
-	 in the vertical and horizontal processing*/
+
+	/*
+	 * counter iteration cycle, considers all combinations are not empty in the
+	 * vertical and horizontal processing
+	 */
 	private int countSuccessfulCombination;
 
 	public ResultMatrix(byte[][] result) {
 		this.result = result;
 		countSuccessfulCombination = 0;
 	}
-	
-	/* array to list*/
+
+	/* array to list */
 	public List<List<Byte>> returnTheList() {
 
 		List<List<Byte>> resultShow = new ArrayList<>();
@@ -46,72 +48,45 @@ public class ResultMatrix {
 
 	/* starts the mechanism displacement elements all the rows */
 	public byte[][] displacementVert(List<List<Integer>> rows, int sizeColumn) {
-
-		byte[] handler = new byte[sizeColumn];
-		byte[] handlerBase;
-		byte[] handlerLight = new byte[sizeColumn];
-
-		int summElement;
-
-		List<Integer> indents = new ArrayList<>();
-
-		for (int row = 0; row < rows.size(); row++) {
-				
-			handlerLight = fillLight(handlerLight);
-			handlerBase = getRowFromMatrix(row, sizeColumn);
-			int[] indent;
-			summElement = rows.get(row).stream().reduce((left, right) -> left + right).get();
-
-			SearchCombinations searchCombinations = new SearchCombinations(rows.get(row).size(), summElement,
-					sizeColumn);
-
-			searchCombinations.countCombinations();
-
-			do {
-
-				indent = searchCombinations.getIndent();
-				indents.clear();
-				indents = createIndents(rows.get(row), sizeColumn, indent);
-				handler = displacement(rows.get(row), sizeColumn, indents);
-
-				if (needEquals(handlerBase, handler)) {
-					equalsLine(handlerBase, handler);
-					equalsLight(handlerLight, handler);
-				}
-
-			} while (searchCombinations.countCombinations());
-
-			handlerBase = approve(handlerBase, summElement);
-			handlerBase = equalsBaseLight(handlerBase, handlerLight);
-
-			for (int i = 0; i < handlerBase.length; i++) {
-				result[row][i] = handlerBase[i];
-			}
-
-		}
+		
+		displacementVertAndHorz(rows, sizeColumn, "vertical");
+		
 		return result;
 	}
 
 	/* starts the mechanism displacement elements all the column */
 	public byte[][] displacementHorz(List<List<Integer>> columns, int sizeRow) {
 
-		byte[] handler = new byte[sizeRow];
-		byte[] handlerBase;
-		byte[] handlerLight = new byte[sizeRow];
+		displacementVertAndHorz(columns, sizeRow, "horizontal");
 
+		return result;
+	}
+	
+	/* processing lines for the presence of overlays*/
+	private byte[][] displacementVertAndHorz(List<List<Integer>> rowOrColumns, int sizeColumnOrRow, String direction) {
+
+		byte[] handler = new byte[sizeColumnOrRow];
+		byte[] handlerBase = null;
+		byte[] handlerLight = new byte[sizeColumnOrRow];
 		int summElement;
 
 		List<Integer> indents = new ArrayList<>();
 
-		for (int column = 0; column < columns.size(); column++) {
-			
-			handlerLight = fillLight(handlerLight);
-			handlerBase = getColumnFromMatrix(column, sizeRow);
-			int[] indent;
-			summElement = columns.get(column).stream().reduce((left, right) -> left + right).get();
+		for (int column = 0; column < rowOrColumns.size(); column++) {
 
-			SearchCombinations searchCombinations = new SearchCombinations(columns.get(column).size(), summElement,
-					sizeRow);
+			handlerLight = fillLight(handlerLight);
+			if (direction == "vertical") {
+				handlerBase = getRowFromMatrix(column, sizeColumnOrRow);
+			}
+			if (direction == "horizontal") {
+				handlerBase = getColumnFromMatrix(column, sizeColumnOrRow);
+			}			
+			
+			int[] indent;
+			summElement = rowOrColumns.get(column).stream().reduce((left, right) -> left + right).get();
+
+			SearchCombinations searchCombinations = new SearchCombinations(rowOrColumns.get(column).size(), summElement,
+					sizeColumnOrRow);
 
 			searchCombinations.countCombinations();
 
@@ -119,29 +94,39 @@ public class ResultMatrix {
 
 				indent = searchCombinations.getIndent();
 				indents.clear();
-				indents = createIndents(columns.get(column), sizeRow, indent);
-				handler = displacement(columns.get(column), sizeRow, indents);
+				indents = createLastIndents(rowOrColumns.get(column), sizeColumnOrRow, indent);
+				handler = displacement(rowOrColumns.get(column), sizeColumnOrRow, indents);
 
 				if (needEquals(handlerBase, handler)) {
-					equalsLine(handlerBase, handler);
-					equalsLight(handlerLight, handler);
+					darkCheck(handlerBase, handler);
+					lightCheck(handlerLight, handler);
 				}
 
 			} while (searchCombinations.countCombinations());
 
-			handlerBase = approve(handlerBase, summElement);
-			handlerBase = equalsBaseLight(handlerBase, handlerLight);
+			handlerBase = blackening(handlerBase, summElement);
+			handlerBase = whitening(handlerBase, handlerLight);
 
-			for (int i = 0; i < handlerBase.length; i++) {
-				result[i][column] = handlerBase[i];
+			if (direction == "vertical") {
+				for (int i = 0; i < handlerBase.length; i++) {
+					result[column][i] = handlerBase[i];
+				}
 			}
+			if (direction == "horizontal") {
+				for (int i = 0; i < handlerBase.length; i++) {
+					result[i][column] = handlerBase[i];
+				}
+			}			
 		}
 		return result;
 	}
+
 	
-	/* calculates the last indent, return array indents, 
-	 [] displace parameter - all the combination indents */
-	private List<Integer> createIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
+	/*
+	 * calculates the last indent, return array indents, [] displace parameter - all
+	 * the combination indents
+	 */
+	private List<Integer> createLastIndents(List<Integer> rowOrColumn, int sizeColumnOrRow, int[] displace) {
 
 		List<Integer> indents = new ArrayList<>();
 		int elementLength = 0;
@@ -170,9 +155,11 @@ public class ResultMatrix {
 		return indents;
 	}
 
-	/* calculate line matrix, uses List<Integer> indent for generated all the 
-	 combination position, if indent = {0,0 ... 0}, elements are positioned with 
-	 a single indent from the beginning*/
+	/*
+	 * calculate line matrix, uses List<Integer> indent for generated all the
+	 * combination position, if indent = {0,0 ... 0}, elements are positioned with a
+	 * single indent from the beginning
+	 */
 	private byte[] displacement(List<Integer> rowOrColumn, int sizeColumnOrRow, List<Integer> indents) {
 
 		byte[] handler = new byte[sizeColumnOrRow];
@@ -194,6 +181,7 @@ public class ResultMatrix {
 		for (int indInnerList = 0; indInnerList < rowOrColumn.size(); indInnerList++) {
 
 			lengthElement = rowOrColumn.get(indInnerList);
+			
 			lengthIndent = indents.get(indInnerList + 1);
 			indexExit = indMatrix + lengthElement;
 
@@ -210,8 +198,8 @@ public class ResultMatrix {
 			}
 		}
 		return handler;
-	}	
-	
+	}
+
 	private byte[] getRowFromMatrix(int row, int sizeColumn) {
 
 		byte[] handlerBase = new byte[sizeColumn];
@@ -234,9 +222,12 @@ public class ResultMatrix {
 			}
 		}
 		return handlerBase;
-	}	
+	}
 
-	/* if generated line rightly superimposed on the base line, check on black element*/
+	/*
+	 * if generated line rightly superimposed on the base line, check on black
+	 * element
+	 */
 	private boolean needEquals(byte[] base, byte[] handler) {
 
 		for (int i = 0; i < base.length; i++) {
@@ -249,7 +240,7 @@ public class ResultMatrix {
 		}
 		return true;
 	}
-	
+
 	private byte[] fillLight(byte[] space) {
 
 		for (int i = 0; i < space.length; i++) {
@@ -257,9 +248,12 @@ public class ResultMatrix {
 		}
 		return space;
 	}
-	
-	/* if generated line rightly superimposed on the base line, check on black element*/
-	private byte[] equalsLine(byte[] base, byte[] handler) {
+
+	/*
+	 * if generated line rightly superimposed on the base line, check on black
+	 * element
+	 */
+	private byte[] darkCheck(byte[] base, byte[] handler) {
 
 		countSuccessfulCombination++;
 
@@ -283,20 +277,23 @@ public class ResultMatrix {
 		}
 		return base;
 	}
-	
-	/* if generated line rightly superimposed on the base line, check on white element*/
-	private byte[] equalsLight(byte[] handlerLight, byte[] handler) {
-		
-		for (int i = 0; i < handlerLight.length; i++) {			
-		if(handler[i] == ItemStatus.DARK.ordinal()) {
-			handlerLight[i] = (byte) ItemStatus.DARK.ordinal();
+
+	/*
+	 * if generated line rightly superimposed on the base line, check on white
+	 * element
+	 */
+	private byte[] lightCheck(byte[] handlerLight, byte[] handler) {
+
+		for (int i = 0; i < handlerLight.length; i++) {
+			if (handler[i] == ItemStatus.DARK.ordinal()) {
+				handlerLight[i] = (byte) ItemStatus.DARK.ordinal();
+			}
 		}
-	}		
-		return handlerLight;		
+		return handlerLight;
 	}
 
-	/* approve base line, after all the combination*/
-	private byte[] approve(byte[] base, int summElement) {
+	/* approve base line, after all the combination */
+	private byte[] blackening(byte[] base, int summElement) {
 
 		int countBlackElements = 0;
 
@@ -318,16 +315,16 @@ public class ResultMatrix {
 		}
 		return base;
 	}
-	
+
 	/* overlay white line on base, after all the combination*/
-	private byte[] equalsBaseLight(byte[] base, byte[] handlerLight) {
-		
-		for (int i = 0; i < base.length; i++) {			
-		if(handlerLight[i] == ItemStatus.LIGHT.ordinal()) {
-			base[i] = (byte) ItemStatus.WHITE.ordinal();
+	private byte[] whitening(byte[] base, byte[] handlerLight) {
+
+		for (int i = 0; i < base.length; i++) {
+			if (handlerLight[i] == ItemStatus.LIGHT.ordinal()) {
+				base[i] = (byte) ItemStatus.WHITE.ordinal();
+			}
 		}
-	}		
-		return base;		
+		return base;
 	}
 
 	public byte[][] getResult() {
