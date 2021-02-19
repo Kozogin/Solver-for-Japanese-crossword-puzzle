@@ -21,7 +21,7 @@
 
 	<div class="container">
 		<div class="child">
-			<h1>Japanese crossword puzzle, enter</h1>			
+			<h1>Japanese crossword puzzle, enter through ,(comma)</h1>			
 			
 			<form:form method="POST" action="${contextPath}/form_table"
 			 class="form-signin">
