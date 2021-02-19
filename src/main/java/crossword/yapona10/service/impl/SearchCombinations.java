@@ -40,7 +40,7 @@ public class SearchCombinations {
 	
 	public boolean countCombinations() {
 		
-		/* condition for exit (all the combinations found)*/
+		/* condition for exit for line with 1 combination*/
 		if(this.sumAllIndent == 0) {					
 			for (int i = 0; i < indent.length; i++) {	
 				indent[i] = 0;							
@@ -58,10 +58,12 @@ public class SearchCombinations {
 				this.indent[this.actualyIndex] = 0;
 				this.actualyIndex++;
 			} while (summArray() >= this.sumAllIndent);
-
+			
+			
 			if (this.actualyIndex < this.numberElement) {
 				this.indent[this.actualyIndex]++;
 			} else {
+				// condition for exit (all the combinations found)
 				return false;
 			}
 		} else {
